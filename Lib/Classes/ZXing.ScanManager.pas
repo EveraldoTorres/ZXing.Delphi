@@ -155,7 +155,13 @@ begin
       pBitmapForScan.Width, pBitmapForScan.Height);
     HybridBinarizer := THybridBinarizer.Create(LuminanceSource);
     BinaryBitmap := TBinaryBitmap.Create(HybridBinarizer);
-    Result := FMultiFormatReader.Decode(BinaryBitmap, true);
+   
+    try   //Compilar em Delphi 12.2 e 12.3  esse código abaixo causa "Integer Overflow" 
+       Result := FMultiFormatReader.Decode(BinaryBitmap, true);
+    Except
+       on E: Exception do
+         raise Exception.Create('ZXing.ScanManager.pas - TScanManager.Scan(Error Line:160): Erro: Result Integer Overflow '+E.Message);
+     end;   
 
     if (Result = nil) then
     begin
