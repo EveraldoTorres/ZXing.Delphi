@@ -155,8 +155,14 @@ begin
       pBitmapForScan.Width, pBitmapForScan.Height);
     HybridBinarizer := THybridBinarizer.Create(LuminanceSource);
     BinaryBitmap := TBinaryBitmap.Create(HybridBinarizer);
-    Result := FMultiFormatReader.Decode(BinaryBitmap, true);
-
+    
+    try 
+       Result := FMultiFormatReader.Decode(BinaryBitmap, true); //Compilar com Delphi(12.2 ou 12.3) para Android-64 causa "Integer Overflow"
+    Except
+      on E: Exception do
+      raise Exception.Create('ZXing.ScanManager.pas - TScanManager.Scan(Error Line:160): Erro: Result retona: "Integer Overflow" '+E.Message);
+    end;
+    
     if (Result = nil) then
     begin
       if (FEnableInversion) then
